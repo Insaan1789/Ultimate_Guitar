@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circle of Fifths Music Wheel</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --wheel-bg: #e0e0e0;
+            --wheel-bg-dark: #222;
+            --text-main: #eee;
+            --text-dim: #aaa;
+            --accent: #00d4ff;
+            --overlay-stroke: #000;
+            --overlay-width: 4px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        h1 {
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        /* TOOLTIP */
+        #chord-tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid #555;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.2s, transform 0.2s;
+            z-index: 1000;
+            min-width: 180px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        #chord-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #chord-tooltip h3 {
+            margin: 0 0 10px 0;
+            color: #fff;
+            font-size: 1.3rem;
+        }
+
+        /* WHEEL CONTAINER */
+        .wheel-wrapper {
+            position: relative;
+            width: 700px;
+            height: 700px;
+            touch-action: none;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            filter: drop-shadow(0 0 30px rgba(0, 0, 0, 0.8));
+        }
+
+        svg:active {
+            cursor: grabbing;
+        }
+
+        text {
+            font-family: 'Segoe UI', sans-serif;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none;
+        }
+
+        .mode-label {
+            fill: #888;
+            font-size: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .overlay-label {
+            paint-order: stroke;
+            stroke: #fff;
+            stroke-width: 4px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            font-weight: 900;
+        }
+
+        /* Outline logic */
+        .group-outline {
+            fill: none;
+            stroke: #000;
+            stroke-width: 5;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Circle of Fifths Decoder</h1>
+
+    <div class="wheel-wrapper" id="wheel-wrapper">
+        <svg id="music-wheel" viewBox="-350 -350 700 700">
+            <defs>
+                <filter id="shadow">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.5" />
+                </filter>
+            </defs>
+
+            <!-- 1. STATIC MODE LABELS -->
+            <g id="static-modes">
+                <!-- Generated in JS -->
+            </g>
+
+            <!-- 2. ROTATING DISK -->
+            <g id="rotating-container">
+                <!-- Segments Generated in JS -->
+            </g>
+
+            <!-- 3. STATIC OVERLAY -->
+            <g id="static-overlay" pointer-events="none">
+                <path id="overlay-path" class="group-outline" d="" />
+                <g id="overlay-labels"></g>
+            </g>
+        </svg>
+
+        <div id="chord-tooltip"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
