@@ -19,13 +19,13 @@ const RING_CONFIG = [
 
 // Roman Numerals for Overlay - Updated radii
 const OVERLAY_LABELS = [
-    { text: 'I', slot: 0, r: 130 },
-    { text: 'V', slot: 1, r: 130 },
-    { text: 'IV', slot: 11, r: 130 },
-    { text: 'vi', slot: 0, r: 210 },
-    { text: 'iii', slot: 1, r: 210 },
-    { text: 'ii', slot: 11, r: 210 },
-    { text: 'vii°', slot: 1, r: 290 } // Aligned with iii
+    { text: 'I', slot: 0, r: 150 },
+    { text: 'V', slot: 1, r: 150 },
+    { text: 'IV', slot: 11, r: 150 },
+    { text: 'vi', slot: 0, r: 230 },
+    { text: 'iii', slot: 1, r: 230 },
+    { text: 'ii', slot: 11, r: 230 },
+    { text: 'vii°', slot: 0, r: 310 } // Aligned with iii
 ];
 
 // Mode Labels (Static Outer Ring)
@@ -185,7 +185,7 @@ function drawOverlay() {
         txt.textContent = l.text;
         txt.setAttribute('x', pos.x);
         txt.setAttribute('y', pos.y);
-        txt.setAttribute('font-size', "22px");
+        txt.setAttribute('font-size', "20px");
         txt.setAttribute('fill', '#000');
 
         txt.setAttribute('class', 'overlay-label');
@@ -437,7 +437,7 @@ function describeArc(x, y, rOuter, rInner, startAngle, endAngle) {
         "M", startOuter.x, startOuter.y,
         "A", rOuter, rOuter, 0, largeArc, 0, endOuter.x, endOuter.y,
         "L", endInner.x, endInner.y,
-        "A", rInner, rInner, 0, largeArc, 1, startInner.x, startInner.y,
+        "A", 250, 250, 0, 0, 1, -63.63961030678927 - 241.481456572267,
         "Z"
     ].join(" ");
 }
