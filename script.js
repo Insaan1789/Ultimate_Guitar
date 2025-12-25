@@ -19,18 +19,18 @@ const RING_CONFIG = [
 
 // Roman Numerals for Overlay - Updated radii
 const OVERLAY_LABELS = [
-    { text: 'I', slot: 0, r: 150 },
-    { text: 'V', slot: 1, r: 150 },
-    { text: 'IV', slot: 11, r: 150 },
-    { text: 'vi', slot: 0, r: 230 },
-    { text: 'iii', slot: 1, r: 230 },
-    { text: 'ii', slot: 11, r: 230 },
-    { text: 'vii°', slot: 0, r: 310 } // Aligned with iii
+    { text: 'I', slot: -0.3, r: 156 },
+    { text: 'V', slot: 0.7, r: 153 },
+    { text: 'IV', slot: 10.7, r: 153 },
+    { text: 'vi', slot: -0.35, r: 230 },
+    { text: 'iii', slot: .65, r: 230 },
+    { text: 'ii', slot: 10.65, r: 230 },
+    { text: 'vii°', slot: -0.3, r: 310 }
 ];
 
 // Mode Labels (Static Outer Ring)
 const MODE_LABELS = [
-    { t: 'Ionian', slot: 0 },
+    { t: 'Ionian', slot: 2 },
     { t: 'Mixolydian', slot: 1 },
     { t: 'Lydian', slot: 11 },
 ];
@@ -146,32 +146,16 @@ function drawWheel() {
 }
 
 function drawOverlay() {
-    // New Shape "Fan"
-
-    const R_IN = 90;
-    const R_MID1 = 170;
-    const R_MID2 = 250;
-    const R_OUT = 330;
-
-    const A_LEFT = -135; // Start of Slot 11
-    const A_MID_RIGHT = -75; // Start of Slot 1
-    const A_RIGHT = -45; // End of Slot 1
-
-    // Path Trace
-    const pBotRight = polar(R_IN, A_RIGHT);
-    const pBotLeft = polar(R_IN, A_LEFT);
-    const pMidTopLeft = polar(R_MID2, A_LEFT); // Top-left of Minor Row
-    const pDimStart = polar(R_MID2, A_MID_RIGHT); // Indent start
-    const pDimTopStart = polar(R_OUT, A_MID_RIGHT);
-    const pDimTopEnd = polar(R_OUT, A_RIGHT);
-
+    // Hardcoded path from user request
     const d = `
-        M ${pBotRight.x} ${pBotRight.y}
-        A ${R_IN} ${R_IN} 0 0 0 ${pBotLeft.x} ${pBotLeft.y}
-        L ${pMidTopLeft.x} ${pMidTopLeft.y}
-        A ${R_MID2} ${R_MID2} 0 0 1 ${pDimStart.x} ${pDimStart.y}
-        L ${pDimTopStart.x} ${pDimTopStart.y}
-        A ${R_OUT} ${R_OUT} 0 0 1 ${pDimTopEnd.x} ${pDimTopEnd.y}
+        M 63.63961030678928 -63.63961030678927
+        A 90 90 0 0 0 -63.63961030678927 -63.63961030678928
+        L -176.77669529663686 -176.7766952966369
+        A 250 250 0 0 1 -63.63961030678927 -241.4814565722671
+        L -82.63961030678927 -318.75552267539257
+        A 330 330 0 0 1 82.3452377915607 -318.34523779156066
+        L 65.63961030678927 -243.75552267539257
+        A 250 250 0 0 1 173.63961030678927 -176.4814565722671
         Z
     `;
 
@@ -437,7 +421,7 @@ function describeArc(x, y, rOuter, rInner, startAngle, endAngle) {
         "M", startOuter.x, startOuter.y,
         "A", rOuter, rOuter, 0, largeArc, 0, endOuter.x, endOuter.y,
         "L", endInner.x, endInner.y,
-        "A", 250, 250, 0, 0, 1, -63.63961030678927 - 241.481456572267,
+        "A", rInner, rInner, 0, largeArc, 1, startInner.x, startInner.y,
         "Z"
     ].join(" ");
 }
