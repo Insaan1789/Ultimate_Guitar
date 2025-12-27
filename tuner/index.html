@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Guitar Tuner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="tuner-container">
+        <div class="status-bar">
+            <span id="status-text">Click Start to Begin</span>
+        </div>
+
+        <div class="meter-container">
+            <div class="meter-scale">
+                <div class="tick"></div>
+                <div class="tick"></div>
+                <div class="tick center"></div>
+                <div class="tick"></div>
+                <div class="tick"></div>
+            </div>
+            <div class="needle" id="tuner-needle"></div>
+            <div class="frequency-display">
+                <span id="frequency">0.0</span> Hz
+            </div>
+        </div>
+
+        <div class="note-display">
+            <div class="note-name" id="note-name">--</div>
+            <div class="tuning-indicator" id="tuning-indicator">IN TUNE</div>
+        </div>
+
+        <div class="string-selector">
+            <button class="string-btn" data-note="E2" data-freq="82.41">E</button>
+            <button class="string-btn" data-note="A2" data-freq="110.00">A</button>
+            <button class="string-btn" data-note="D3" data-freq="146.83">D</button>
+            <button class="string-btn" data-note="G3" data-freq="196.00">G</button>
+            <button class="string-btn" data-note="B3" data-freq="246.94">B</button>
+            <button class="string-btn" data-note="E4" data-freq="329.63">E</button>
+            <button class="string-btn active" id="auto-mode-btn" data-note="AUTO">AUTO</button>
+        </div>
+
+        <button id="start-btn">🎤 Start Tuner</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
