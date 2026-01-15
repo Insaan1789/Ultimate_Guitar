@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Metronome</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #00ff88;
+            --secondary-color: #333;
+            --text-color: #e0e0e0;
+            --accent-color: #00bcd4;
+            --danger-color: #ff5252;
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-family);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        .metronome-container {
+            background-color: var(--surface-color);
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Visual Beat Indicator */
+        .beat-visualizer {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .beat-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            transition: transform 0.1s, background-color 0.1s, box-shadow 0.1s;
+        }
+
+        .beat-circle.active {
+            transform: scale(1.2);
+            background-color: var(--primary-color);
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+
+        .beat-circle.accent {
+            background-color: var(--accent-color);
+            box-shadow: 0 0 25px var(--accent-color);
+        }
+
+        /* BPM Display section */
+        .bpm-section {
+            text-align: center;
+        }
+
+        .bpm-display {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--primary-color);
+            font-variant-numeric: tabular-nums;
+            cursor: pointer;
+        }
+
+        .bpm-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        /* Slider */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--secondary-color);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .adjust-btn {
+            background: var(--secondary-color);
+            border: none;
+            color: var(--text-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .adjust-btn:hover {
+            background: #444;
+        }
+
+        .adjust-btn:active {
+            background: #555;
+        }
+
+        /* Controls: Start/Stop & Tap */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #000;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Presets */
+        .presets {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .preset-btn {
+            flex: 1;
+            padding: 0.5rem;
+            background: #2a2a2a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: #333;
+            color: white;
+            border-color: #444;
+        }
+
+        /* Settings: Time Signature */
+        .settings {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #333;
+        }
+
+        select {
+            background: #2a2a2a;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid #333;
+            font-size: 1rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .label-text {
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="metronome-container">
+
+        <!-- Visual Indicator -->
+        <div class="beat-visualizer">
+            <div class="beat-circle" id="visual-beat"></div>
+        </div>
+
+        <!-- BPM Display -->
+        <div class="bpm-section">
+            <div class="bpm-display" id="bpm-val">120</div>
+            <div class="bpm-label">BPM</div>
+        </div>
+
+        <!-- Slider & Fine Adjust -->
+        <div class="slider-container">
+            <button class="adjust-btn" id="bpm-minus">−</button>
+            <input type="range" id="bpm-slider" min="30" max="300" value="120">
+            <button class="adjust-btn" id="bpm-plus">+</button>
+        </div>
+
+        <!-- Presets -->
+        <div class="presets">
+            <button class="preset-btn" data-bpm="60">60</button>
+            <button class="preset-btn" data-bpm="80">80</button>
+            <button class="preset-btn" data-bpm="100">100</button>
+            <button class="preset-btn" data-bpm="120">120</button>
+            <button class="preset-btn" data-bpm="140">140</button>
+        </div>
+
+        <!-- Main Controls -->
+        <div class="controls">
+            <button class="btn btn-secondary" id="tap-btn">TAP</button>
+            <button class="btn btn-primary" id="start-stop-btn">START</button>
+        </div>
+
+        <!-- Settings -->
+        <div class="settings">
+            <span class="label-text">Time Signature</span>
+            <select id="time-sig-select">
+                <option value="1">1/4</option>
+                <option value="2">2/4</option>
+                <option value="3">3/4</option>
+                <option value="4" selected>4/4</option>
+                <option value="5">5/4</option>
+                <option value="7">7/4</option>
+                <!-- 8th note based signatures need specific handling logic for accenting patterns if complex, 
+                 for now we will treat them as N beats per bar, relying on standard accent on 1 -->
+                <option value="5">5/8</option>
+                <option value="6">6/8</option>
+                <option value="7">7/8</option>
+                <option value="9">9/8</option>
+                <option value="12">12/8</option>
+            </select>
+        </div>
+
+    </div>
+
+    <script>
+        class Metronome {
+            constructor() {
+                this.audioContext = null;
+                this.isPlaying = false;
+                this.currentBeatInBar = 0;
+                this.beatsPerBar = 4;
+                this.tempo = 120;
+                this.lookahead = 25.0; // How frequently to call scheduling function (in milliseconds)
+                this.scheduleAheadTime = 0.1; // How far ahead to schedule audio (in seconds)
+                this.nextNoteTime = 0.0; // when the next note is due.
+                this.timerWorker = null; // Used for timing if we implemented a worker, but sticking to setInterval for simplicity in single file first
+
+                // UI Elements
+                this.bpmDisplay = document.getElementById('bpm-val');
+                this.bpmSlider = document.getElementById('bpm-slider');
+                this.startStopBtn = document.getElementById('start-stop-btn');
+                this.tapBtn = document.getElementById('tap-btn');
+                this.visualBeat = document.getElementById('visual-beat');
+                this.timeSigSelect = document.getElementById('time-sig-select');
+
+                // Tap Tempo Variables
+                this.tapTimes = [];
+
+                this.init();
+            }
+
+            init() {
+                // Event Listeners
+                this.startStopBtn.addEventListener('click', () => this.toggle());
+                this.bpmSlider.addEventListener('input', (e) => this.setTempo(e.target.value));
+
+                document.getElementById('bpm-minus').addEventListener('click', () => this.setTempo(this.tempo - 1));
+                document.getElementById('bpm-plus').addEventListener('click', () => this.setTempo(this.tempo + 1));
+
+                // Presets
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.setTempo(Number(btn.dataset.bpm));
+                    });
+                });
+
+                this.timeSigSelect.addEventListener('change', (e) => {
+                    this.beatsPerBar = Number(e.target.value);
+                    this.currentBeatInBar = 0; // Reset beat counter on change
+                });
+
+                this.tapBtn.addEventListener('mousedown', () => this.handleTap()); // mousedown for faster response
+            }
+
+            setTempo(bpm) {
+                let newBpm = Math.max(30, Math.min(300, Number(bpm)));
+                this.tempo = newBpm;
+                this.bpmDisplay.textContent = this.tempo;
+                this.bpmSlider.value = this.tempo;
+            }
+
+            toggle() {
+                this.isPlaying = !this.isPlaying;
+
+                if (this.isPlaying) {
+                    this.start();
+                    this.startStopBtn.textContent = "STOP";
+                    this.startStopBtn.classList.replace('btn-primary', 'btn-danger');
+                } else {
+                    this.stop();
+                    this.startStopBtn.textContent = "START";
+                    this.startStopBtn.classList.replace('btn-danger', 'btn-primary');
+                }
+            }
+
+            start() {
+                if (this.audioContext == null) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                this.currentBeatInBar = 0;
+                this.nextNoteTime = this.audioContext.currentTime + 0.05;
+                this.timerID = setInterval(() => this.scheduler(), this.lookahead);
+                requestAnimationFrame(this.draw.bind(this));
+            }
+
+            stop() {
+                clearInterval(this.timerID);
+                // reset visual
+                this.visualBeat.classList.remove('active', 'accent');
+            }
+
+            scheduler() {
+                // while there are notes that will need to play before the next interval, 
+                // schedule them and advance the pointer.
+                while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
+                    this.scheduleNote(this.currentBeatInBar, this.nextNoteTime);
+                    this.nextNote();
+                }
+            }
+
+            scheduleNote(beatNumber, time) {
+                // push the note to the queue for visual processing
+                this.lastNoteDrawn = beatNumber;
+
+                // create an oscillator
+                const osc = this.audioContext.createOscillator();
+                const envelope = this.audioContext.createGain();
+
+                const isAccent = (beatNumber === 0);
+
+                osc.frequency.value = isAccent ? 1000 : 800; // High pitch for accent, lower for others
+
+                envelope.gain.value = 1;
+                envelope.gain.exponentialRampToValueAtTime(1, time + 0.001);
+                envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+
+                osc.connect(envelope);
+                envelope.connect(this.audioContext.destination);
+
+                osc.start(time);
+                osc.stop(time + 0.06);
+
+                // Scheduling visual update closely aligned with audio
+                // We use setTimeout here to trigger class change roughly when audio plays
+                // Precise drift-free audio is handled by WebAudio scheduling above.
+                // Visuals just need to be "close enough" for human perception or synced via requestAnimationFrame loop checking currentTime
+
+                // Better visual sync approach:
+                // We can't strictly modify DOM from here perfectly in sync with audio time in the future.
+                // Instead, we capture the scheduled time and let the draw loop handle it.
+                this.notesInQueue.push({ note: beatNumber, time: time });
+            }
+
+            nextNote() {
+                const secondsPerBeat = 60.0 / this.tempo;
+                this.nextNoteTime += secondsPerBeat; // Add beat length to last beat time
+
+                this.currentBeatInBar++;
+                if (this.currentBeatInBar >= this.beatsPerBar) {
+                    this.currentBeatInBar = 0;
+                }
+            }
+
+            // Draw loop for precise visual sync
+            notesInQueue = [];
+            draw() {
+                let currentNote = this.lastNoteDrawn;
+                let currentTime = this.audioContext.currentTime;
+
+                while (this.notesInQueue.length && this.notesInQueue[0].time < currentTime) {
+                    currentNote = this.notesInQueue[0].note;
+
+                    // Trigger Visual
+                    this.triggerVisual(currentNote === 0);
+
+                    this.notesInQueue.splice(0, 1); // remove note
+                }
+
+                if (this.isPlaying) {
+                    requestAnimationFrame(this.draw.bind(this));
+                }
+            }
+
+            triggerVisual(isAccent) {
+                // Reset animation
+                this.visualBeat.classList.remove('active', 'accent');
+                void this.visualBeat.offsetWidth; // trigger reflow
+
+                if (isAccent) {
+                    this.visualBeat.classList.add('accent');
+                } else {
+                    this.visualBeat.classList.add('active');
+                }
+            }
+
+            handleTap() {
+                const now = Date.now();
+
+                // Reset if pause is too long (e.g. 2 seconds)
+                if (this.tapTimes.length > 0 && now - this.tapTimes[this.tapTimes.length - 1] > 2000) {
+                    this.tapTimes = [];
+                }
+
+                this.tapTimes.push(now);
+
+                // Keep only last 4 taps
+                if (this.tapTimes.length > 4) {
+                    this.tapTimes.shift();
+                }
+
+                if (this.tapTimes.length > 1) {
+                    // Calculate average interval
+                    let intervals = [];
+                    for (let i = 1; i < this.tapTimes.length; i++) {
+                        intervals.push(this.tapTimes[i] - this.tapTimes[i - 1]);
+                    }
+
+                    const avgInterval = intervals.reduce((a, b) => a + b) / intervals.length;
+                    const newBpm = Math.round(60000 / avgInterval);
+
+                    this.setTempo(newBpm);
+
+                    // If playing, restart to sync smoothly to new tap
+                    if (this.isPlaying) {
+                        this.currentBeatInBar = 0;
+                        this.nextNoteTime = this.audioContext.currentTime + 0.05;
+                        this.notesInQueue = []; // clear pending visuals
+                    }
+                }
+            }
+        }
+
+        // Initialize
+        const metronome = new Metronome();
+
+    </script>
+
+</body>
+
+</html>

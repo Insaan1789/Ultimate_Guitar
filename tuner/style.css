@@ -1,221 +1,1110 @@
 :root {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
+    /* Premium Dark Theme (Default) */
+    --bg-color: #0a0a0a;
+    --card-bg: #141414;
+    --card-surface: #1e1e1e;
+
     --text-main: #ffffff;
     --text-dim: #888888;
+    --text-accent: #00ff88;
+
     --accent-green: #00ff88;
+    --accent-green-dim: rgba(0, 255, 136, 0.2);
     --accent-red: #ff4444;
     --accent-blue: #00ccff;
+
     --needle-color: #ffffff;
+    --ring-neutral: #333333;
+
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --glow-green: 0 0 20px rgba(0, 255, 136, 0.4);
+    --glow-red: 0 0 20px rgba(255, 68, 68, 0.4);
+
+    --font-family: 'Inter', system-ui, sans-serif;
+    --transition-speed: 0.2s;
+}
+
+/* Light Mode Overrides */
+[data-theme="light"] {
+    --bg-color: #f5f5f7;
+    --card-bg: #ffffff;
+    --card-surface: #f0f0f0;
+    --text-main: #1d1d1f;
+    --text-dim: #86868b;
+    --text-accent: #00b359;
+    --needle-color: #1d1d1f;
+    --ring-neutral: #e0e0e0;
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
+    font-family: var(--font-family);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     overflow: hidden;
+    /* Prevent scroll on bounce */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.tuner-container {
+/* --- Container --- */
+.app-container {
     width: 100%;
-    max-width: 500px;
-    padding: 2rem;
+    max-width: 480px;
+    /* Mobile width constraint */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: var(--bg-color);
+}
+
+/* --- Header --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.logo .highlight {
+    color: var(--accent-green);
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-main);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.icon-btn:hover {
+    background: var(--card-surface);
+}
+
+.icon-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* --- Main Interface --- */
+.tuner-interface {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    padding: 0 2rem 2rem;
+    justify-content: space-evenly;
 }
 
-/* Status Bar */
-.status-bar {
-    font-size: 0.9rem;
+/* Feedback Status */
+.feedback-container {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.status-pill {
+    font-size: 0.8rem;
     color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    height: 1.2rem;
+    background: var(--card-bg);
+    padding: 4px 12px;
+    border-radius: 12px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
 }
 
-/* Meter / Gauge */
-.meter-container {
+.status-pill.warning {
+    color: #ffaa00;
+    background: rgba(255, 170, 0, 0.1);
+}
+
+.status-pill.good {
+    color: var(--accent-green);
+    background: var(--accent-green-dim);
+}
+
+/* --- Meter Gauge --- */
+.meter-wrapper {
     position: relative;
     width: 100%;
-    height: 150px;
-    background: radial-gradient(circle at bottom, #2a2a2a 0%, transparent 70%);
-    border-bottom: 2px solid #333;
+    height: 200px;
     display: flex;
     justify-content: center;
-    overflow: hidden;
+    align-items: center;
+    perspective: 1000px;
 }
 
+/* Scale Background / Ticks */
 .meter-scale {
     position: absolute;
-    bottom: 0;
-    width: 80%;
+    width: 280px;
+    height: 140px;
+    /* Semi-circle */
+    border-top-left-radius: 140px;
+    border-top-right-radius: 140px;
+    background: radial-gradient(circle at bottom, var(--card-bg) 0%, transparent 70%);
+    border: 1px solid var(--ring-neutral);
+    border-bottom: none;
+    overflow: hidden;
+    box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Ticks via gradients */
+.scale-ticks {
+    position: absolute;
+    width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    padding-bottom: 10px;
+    top: 0;
+    left: 0;
 }
 
 .tick {
-    width: 2px;
-    height: 15px;
-    background-color: #444;
+    position: absolute;
+    background: var(--text-dim);
+    bottom: 0;
+    left: 50%;
+    transform-origin: bottom center;
 }
 
-.tick.center {
-    height: 30px;
+.tick.big {
     width: 4px;
-    background-color: var(--accent-green);
+    height: 20px;
+    background: var(--accent-green);
+    margin-left: -2px;
+    z-index: 2;
+}
+
+.tick.major {
+    width: 2px;
+    height: 12px;
+    margin-left: -1px;
+}
+
+.tick.left-25 {
+    transform: rotate(-22.5deg) translateY(-10px);
+}
+
+/* Approx half way to 45 */
+.tick.right-25 {
+    transform: rotate(22.5deg) translateY(-10px);
+}
+
+/* Tick Marks for Cents (Conic Gradient Trick) */
+.meter-scale::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 0;
+    border-top-left-radius: 130px;
+    border-top-right-radius: 130px;
+    z-index: 0;
+    /* Optional: Faint ticks background */
+    opacity: 0.1;
+    background: repeating-conic-gradient(from 270deg at 50% 100%,
+            var(--text-main) 0deg 0.5deg,
+            transparent 0.5deg 4.5deg
+            /* 5 deg intervals approx */
+        );
+    mask-image: radial-gradient(circle at bottom, transparent 60%, black 61%);
+}
+
+/* Stability Bar (Ring filling up) */
+.stability-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 4px;
+    background: var(--ring-neutral);
+    border-radius: 2px;
+}
+
+.stability-bar {
+    height: 100%;
+    width: 0%;
+    /* JS updates this */
+    background: var(--accent-green);
+    border-radius: 2px;
+    margin: 0 auto;
+    transition: width 0.1s linear;
     box-shadow: 0 0 10px var(--accent-green);
+}
+
+/* Needle */
+.needle-container {
+    position: absolute;
+    bottom: 40px;
+    /* Aligned with bottom of meter scale */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    z-index: 5;
 }
 
 .needle {
     position: absolute;
-    bottom: 0px;
-    left: 50%;
+    bottom: 0;
+    left: -2px;
+    /* Center 4px width */
     width: 4px;
-    height: 110px;
-    background-color: var(--needle-color);
+    height: 130px;
+    background: var(--needle-color);
     border-radius: 4px;
     transform-origin: bottom center;
-    transform: translateX(-50%) rotate(0deg);
-    /* transition: transform 0.1s; Removed for JS Lerp */
-    z-index: 10;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: rotate(0deg);
+    /* Transition handled by JS or CSS? Prompt "ease-out" */
+    /* JS does smooth update, CSS transition can add extra smoothness but lag */
+    will-change: transform;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
+.needle-glow {
+    position: absolute;
+    bottom: 0;
+    left: -20px;
+    width: 40px;
+    height: 130px;
+    background: radial-gradient(ellipse at bottom, var(--accent-green) 0%, transparent 70%);
+    transform-origin: bottom center;
+    opacity: 0;
+    /* JS controls this */
+    transition: opacity 0.2s;
+    filter: blur(8px);
+    mix-blend-mode: screen;
+}
+
+/* Frequency text */
 .frequency-display {
     position: absolute;
-    bottom: -30px;
-    /* Below the meter */
-    font-size: 1rem;
-    color: var(--text-dim);
+    bottom: 0;
+    font-family: 'Inter', monospace;
+    font-size: 1.2rem;
     font-variant-numeric: tabular-nums;
+    color: var(--text-dim);
+    opacity: 0.8;
 }
 
-/* Note Display */
-.note-display {
+.frequency-display .unit {
+    font-size: 0.8rem;
+}
+
+/* --- Note Display --- */
+.note-display-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.note-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    box-shadow: 20px 20px 60px #090909, -20px -20px 60px #1b1b1b;
+    /* Neumorph dark */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[data-theme="light"] .note-circle {
+    box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
 }
 
 .note-name {
-    font-size: 6rem;
+    font-size: 5rem;
     font-weight: 900;
-    line-height: 1;
     color: var(--text-dim);
-    /* Default Dim */
-    text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    transition: color 0.2s, text-shadow 0.2s;
+    transition: color 0.1s, transform 0.1s;
+    line-height: 1;
 }
 
 .note-name.active {
     color: var(--text-main);
-    text-shadow: 0 0 30px var(--accent-blue);
 }
 
 .note-name.in-tune {
     color: var(--accent-green);
-    text-shadow: 0 0 40px var(--accent-green);
+    text-shadow: 0 0 30px var(--accent-green);
+    transform: scale(1.1);
 }
 
-.tuning-indicator {
+.octave {
+    position: absolute;
+    bottom: 20px;
+    right: 35px;
     font-size: 1.2rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: transparent;
-    transition: color 0.2s;
-}
-
-/* String Selection */
-.string-selector {
-    display: flex;
-    justify-content: center;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-}
-
-.string-btn {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    border: 2px solid #333;
-    background: transparent;
     color: var(--text-dim);
+}
+
+.tuning-status {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
     font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    color: var(--text-dim);
+    height: 1.2rem;
+}
+
+/* --- Controls --- */
+.controls-area {
+    width: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
     align-items: center;
 }
 
-.string-btn:hover {
-    border-color: #555;
-    color: var(--text-main);
+/* String Grid */
+.string-grid {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    /* Tight on mobile */
+    width: 100%;
+    padding: 0 10px;
 }
 
-.string-btn.active {
-    border-color: var(--accent-green);
-    background-color: rgba(0, 255, 136, 0.1);
-    color: var(--accent-green);
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+.string-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
 }
 
-#auto-mode-btn {
-    width: auto;
-    padding: 0 1.2rem;
-    border-radius: 25px;
-    font-size: 0.9rem;
-}
-
-/* Controls */
-#start-btn {
-    padding: 1rem 2.5rem;
-    font-size: 1.1rem;
+/* Pill Shape String Button */
+.string-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--ring-neutral);
+    background: var(--card-surface);
+    color: var(--text-dim);
     font-weight: 700;
-    background-color: var(--card-bg);
-    color: var(--text-main);
-    border: none;
-    border-radius: 50px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: grid;
+    place-items: center;
 }
 
-#start-btn:hover {
-    background-color: #2a2a2a;
+.string-btn:hover {
+    border-color: var(--text-dim);
+    color: var(--text-main);
+}
+
+.string-btn:active {
+    transform: scale(0.95);
+}
+
+/* Active State */
+.string-btn.active {
+    background: var(--accent-green-dim);
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+    box-shadow: 0 0 15px var(--accent-green-dim);
     transform: translateY(-2px);
 }
 
-/* Responsive */
-@media (max-width: 400px) {
+/* Tone Button Small */
+.tone-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    opacity: 0.5;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.tone-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tone-btn.playing {
+    color: var(--accent-green);
+    opacity: 1;
+    animation: pulse 1s infinite;
+}
+
+/* Auto Mode */
+.pill-btn {
+    padding: 8px 20px;
+    background: var(--card-surface);
+    border: 1px solid var(--ring-neutral);
+    color: var(--text-dim);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.pill-btn.active {
+    background: var(--accent-blue);
+    color: #000;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 15px rgba(0, 204, 255, 0.3);
+}
+
+/* Main Action */
+.main-action-btn {
+    width: 100%;
+    max-width: 250px;
+    padding: 1rem;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.main-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.main-action-btn:active {
+    transform: translateY(0);
+}
+
+.main-action-btn.stop {
+    background: rgba(255, 68, 68, 0.1);
+    color: var(--accent-red);
+    border: 1px solid rgba(255, 68, 68, 0.3);
+}
+
+/* Settings Drawer (Subtle) */
+.settings-drawer {
+    margin-top: auto;
+    width: 100%;
+    padding: 1rem;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+
+.settings-drawer:hover {
+    opacity: 1;
+}
+
+.setting-label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--ring-neutral);
+    border-radius: 2px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--text-main);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.tuning-status.idle {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Media Queries */
+@media (max-width: 380px) {
+    .note-circle {
+        width: 120px;
+        height: 120px;
+    }
+
     .note-name {
-        font-size: 4.5rem;
+        font-size: 4rem;
     }
 
     .string-btn {
         width: 38px;
         height: 38px;
+        font-size: 0.9rem;
     }
 
-    .meter-container {
-        height: 120px;
+    .meter-wrapper {
+        height: 160px;
     }
+
+    .meter-scale {
+        width: 220px;
+        height: 110px;
+        border-top-left-radius: 110px;
+        border-top-right-radius: 110px;
+    }
+}
+
+/* --- Custom Tuning Editor --- */
+.editor-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.text-btn:hover {
+    color: var(--text-main);
+}
+
+.editor-config {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 16px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label,
+.config-item label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.input-group input {
+    background: var(--card-surface);
+    border: 1px solid var(--ring-neutral);
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 1.1rem;
+    font-family: var(--font-family);
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: var(--accent-green);
+}
+
+.config-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.config-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stepper {
+    display: flex;
+    align-items: center;
+    background: var(--card-surface);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.stepper-btn {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.stepper-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#string-count-display {
+    width: 24px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.pill-btn.small {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+
+/* String Editor List */
+.string-editor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.string-edit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card-surface);
+    padding: 1rem;
+    border-radius: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+.string-num {
+    color: var(--text-dim);
+    font-family: monospace;
+    font-weight: 700;
+}
+
+.note-pill-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--ring-neutral);
+    color: var(--accent-green);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    min-width: 60px;
+    transition: all 0.2s;
+}
+
+.note-pill-btn:hover {
+    border-color: var(--accent-green);
+    background: var(--accent-green-dim);
+}
+
+.danger-zone {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.btn-text-danger {
+    background: none;
+    border: none;
+    color: var(--accent-red);
+    font-size: 0.9rem;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.btn-text-danger:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Note Picker Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    /* Mobile Bottom Sheet vibe */
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 400px;
+    background: var(--card-bg);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 2rem;
+    animation: slideUp 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    border-top: 1px solid var(--card-surface);
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-card h3 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-dim);
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.note-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    /* 2 rows of 6 */
+    gap: 8px;
+    margin-bottom: 2rem;
+}
+
+.note-cell-btn {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: var(--card-surface);
+    border: 1px solid transparent;
+    color: var(--text-main);
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.note-cell-btn.active {
+    background: var(--accent-green);
+    color: #000;
+    box-shadow: 0 0 10px var(--accent-green);
+}
+
+.octave-selector {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.octave-slider {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.octave-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--ring-neutral);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+}
+
+.octave-btn.active {
+    background: var(--text-main);
+    color: var(--bg-color);
+    border-color: var(--text-main);
+}
+
+.modal-actions {
+    text-align: center;
+}
+
+/* Media Query Adjustment */
+@media (min-width: 480px) {
+    .modal-overlay {
+        align-items: center;
+    }
+
+    .modal-card {
+        border-radius: 20px;
+        border: 1px solid var(--card-surface);
+    }
+}
+
+/* --- Tuning Selection Screen --- */
+.tuning-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-color);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tuning-screen.hidden {
+    transform: translateY(100%);
+}
+
+.tuning-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--card-surface);
+}
+
+.tuning-header h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.tuning-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Headstock Toggle */
+.headstock-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card-surface);
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+}
+
+.label {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    font-weight: 600;
+}
+
+.toggle-switch {
+    display: flex;
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 2px;
+}
+
+.toggle-option {
+    padding: 6px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.toggle-option.active {
+    background: var(--text-main);
+    color: var(--bg-color);
+}
+
+/* Tuning Sections */
+.tuning-section h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+}
+
+.tuning-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Tuning Item (Row) */
+.tuning-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--card-surface);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.tuning-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tuning-item.active {
+    border-color: var(--accent-green);
+    background: var(--accent-green-dim);
+}
+
+.tuning-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tuning-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.tuning-notes {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-family: monospace;
+}
+
+.checkmark {
+    color: var(--accent-green);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* Instrument Accordion */
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.accordion-item {
+    background: var(--card-surface);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.accordion-header {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.accordion-icon {
+    transition: transform 0.3s;
+}
+
+.accordion-item.open .accordion-icon {
+    transform: rotate(180deg);
+}
+
+.accordion-content {
+    display: none;
+    padding: 0.5rem 1rem 1rem;
+}
+
+.accordion-item.open .accordion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }

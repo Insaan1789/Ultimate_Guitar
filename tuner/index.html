@@ -3,52 +3,259 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#121212">
     <title>Pro Guitar Tuner</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="tuner-container">
-        <div class="status-bar">
-            <span id="status-text">Click Start to Begin</span>
-        </div>
+    <div class="app-container">
+        <!-- Header / Settings -->
+        <header class="app-header">
+            <h1 class="logo">Guitar<span class="highlight">Tuner</span></h1>
+            <button id="theme-toggle" class="icon-btn" aria-label="Toggle Dark Mode">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <path
+                        d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42">
+                    </path>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="display:none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </header>
 
-        <div class="meter-container">
-            <div class="meter-scale">
-                <div class="tick"></div>
-                <div class="tick"></div>
-                <div class="tick center"></div>
-                <div class="tick"></div>
-                <div class="tick"></div>
+        <!-- Main Tuner UI -->
+        <main class="tuner-interface">
+
+            <!-- Status / Feedback -->
+            <div class="feedback-container">
+                <div id="status-message" class="status-pill">Ready to Tune</div>
             </div>
-            <div class="needle" id="tuner-needle"></div>
-            <div class="frequency-display">
-                <span id="frequency">0.0</span> Hz
+
+            <!-- Meter Gauge -->
+            <div class="meter-wrapper">
+                <div class="meter-scale">
+                    <div class="scale-ticks">
+                        <!-- Generated via CSS/JS or static -->
+                        <div class="tick big center"></div>
+                        <div class="tick major left-25"></div>
+                        <div class="tick major right-25"></div>
+                    </div>
+                    <!-- Tuning Stability Ring/Bar -->
+                    <div class="stability-overlay">
+                        <div class="stability-bar" id="stability-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Needle -->
+                <div class="needle-container">
+                    <div class="needle" id="tuner-needle"></div>
+                    <div class="needle-glow"></div>
+                </div>
+
+                <!-- Frequency -->
+                <div class="frequency-display" aria-label="Frequency">
+                    <span id="frequency">0.0</span> <span class="unit">Hz</span>
+                </div>
             </div>
-        </div>
 
-        <div class="note-display">
-            <div class="note-name" id="note-name">--</div>
-            <div class="tuning-indicator" id="tuning-indicator">IN TUNE</div>
-        </div>
+            <!-- Note Display -->
+            <div class="note-display-container">
+                <div class="note-circle">
+                    <div class="note-name" id="note-name">--</div>
+                    <div class="octave" id="note-octave"></div>
+                </div>
+                <div class="tuning-status" id="tuning-status">PLAY STRING</div>
+            </div>
 
-        <div class="string-selector">
-            <button class="string-btn" data-note="E2" data-freq="82.41">E</button>
-            <button class="string-btn" data-note="A2" data-freq="110.00">A</button>
-            <button class="string-btn" data-note="D3" data-freq="146.83">D</button>
-            <button class="string-btn" data-note="G3" data-freq="196.00">G</button>
-            <button class="string-btn" data-note="B3" data-freq="246.94">B</button>
-            <button class="string-btn" data-note="E4" data-freq="329.63">E</button>
-            <button class="string-btn active" id="auto-mode-btn" data-note="AUTO">AUTO</button>
-        </div>
+            <!-- Controls Area -->
+            <div class="controls-area">
 
-        <button id="start-btn">🎤 Start Tuner</button>
+                <!-- String Selector -->
+                <div class="string-grid" role="radiogroup" aria-label="String Selection">
+                    <!-- Strings will be generated or static -->
+                    <div class="string-item">
+                        <button class="string-btn" data-note="E2" data-freq="82.41">E</button>
+                        <button class="tone-btn" data-note="E2" aria-label="Play E2 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="A2" data-freq="110.00">A</button>
+                        <button class="tone-btn" data-note="A2" aria-label="Play A2 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="D3" data-freq="146.83">D</button>
+                        <button class="tone-btn" data-note="D3" aria-label="Play D3 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="G3" data-freq="196.00">G</button>
+                        <button class="tone-btn" data-note="G3" aria-label="Play G3 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="B3" data-freq="246.94">B</button>
+                        <button class="tone-btn" data-note="B3" aria-label="Play B3 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="E4" data-freq="329.63">E</button>
+                        <button class="tone-btn" data-note="E4" aria-label="Play E4 Reference Tone">🔊</button>
+                    </div>
+                </div>
+
+                <div class="mode-controls">
+                    <button class="pill-btn" id="tuning-select-btn">Standard Tuning</button>
+                    <button class="pill-btn active" id="auto-mode-btn">Auto Mode</button>
+                </div>
+
+                <!-- Tuning Selection Screen (Overlay) -->
+                <div id="tuning-selection-screen" class="tuning-screen hidden">
+                    <div class="tuning-header">
+                        <h2>Select Tuning</h2>
+                        <button id="close-tuning-btn" class="icon-btn">✕</button>
+                    </div>
+
+                    <div class="tuning-content">
+                        <!-- Headstock Toggle -->
+                        <div class="headstock-toggle-container">
+                            <span class="label">Headstock</span>
+                            <div class="toggle-switch">
+                                <button class="toggle-option active" data-layout="3+3">3+3</button>
+                                <button class="toggle-option" data-layout="6-in-line">6-in-line</button>
+                            </div>
+                        </div>
+
+                        <!-- Recent Tunings -->
+                        <div class="tuning-section">
+                            <h3>Recent</h3>
+                            <div class="tuning-list" id="recent-tunings-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Instrument Categories -->
+                        <div class="tuning-section">
+                            <h3>Instruments</h3>
+                            <div class="accordion" id="instrument-accordion">
+                                <!-- Populated by JS: Guitar, Bass, Uke, etc. -->
+                            </div>
+                        </div>
+
+                        <!-- Custom & Chromatic -->
+                        <div class="tuning-section">
+                            <h3>Tools</h3>
+                            <div class="tuning-list">
+                                <button class="tuning-item" data-type="chromatic">
+                                    <div class="tuning-info">
+                                        <span class="tuning-name">Chromatic Tuner</span>
+                                        <span class="tuning-notes">Detects all notes</span>
+                                    </div>
+                                </button>
+                                <button class="tuning-item" data-type="custom">
+                                    <div class="tuning-info">
+                                        <span class="tuning-name">Custom Tuning</span>
+                                        <span class="tuning-notes">Create your own</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Tuning Editor Overlay -->
+                <div id="custom-tuning-editor" class="tuning-screen hidden">
+                    <div class="tuning-header">
+                        <h2>Edit Tuning</h2>
+                        <div class="editor-actions">
+                            <button id="cancel-custom-btn" class="text-btn">Cancel</button>
+                            <button id="save-custom-btn" class="pill-btn active">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="tuning-content">
+                        <!-- Name & Config -->
+                        <div class="editor-config">
+                            <div class="input-group">
+                                <label>Tuning Name</label>
+                                <input type="text" id="custom-name-input" placeholder="My Tuning">
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-item">
+                                    <label>Strings</label>
+                                    <div class="stepper">
+                                        <button id="strings-minus" class="stepper-btn">−</button>
+                                        <span id="string-count-display">6</span>
+                                        <button id="strings-plus" class="stepper-btn">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-item">
+                                    <label>Headstock</label>
+                                    <button id="custom-headstock-toggle" class="pill-btn small">3+3</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- String Editor List -->
+                        <div class="string-editor-list" id="string-editor-list">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <div class="danger-zone hidden" id="delete-tuning-wrapper">
+                            <button id="delete-custom-btn" class="btn-text-danger">Delete Tuning</button>
+                        </div>
+                    </div>
+
+                    <!-- Note Picker Modal (Nested) -->
+                    <div id="note-picker-modal" class="modal-overlay hidden">
+                        <div class="modal-card">
+                            <h3>Select Note</h3>
+                            <div class="note-grid" id="note-picker-grid">
+                                <!-- C C# D ... -->
+                            </div>
+                            <div class="octave-selector">
+                                <label>Octave</label>
+                                <div class="octave-slider">
+                                    <button class="octave-btn" data-oct="0">0</button>
+                                    <button class="octave-btn" data-oct="1">1</button>
+                                    <button class="octave-btn" data-oct="2">2</button>
+                                    <button class="octave-btn active" data-oct="3">3</button>
+                                    <button class="octave-btn" data-oct="4">4</button>
+                                    <button class="octave-btn" data-oct="5">5</button>
+                                    <button class="octave-btn" data-oct="6">6</button>
+                                </div>
+                            </div>
+                            <div class="modal-actions">
+                                <button id="close-picker-btn" class="pill-btn">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button id="start-btn" class="main-action-btn">
+                    <span class="icon">🎤</span> Start Tuner
+                </button>
+            </div>
+
+            <!-- Hidden Settings (Visual only, functional logic remains) -->
+            <div class="settings-drawer">
+                <!-- Using opacity 0 or minimal visibility if user didn't ask to remove, but prompt said "Clean UI" -->
+                <!-- I'll keep it subtle -->
+                <label class="setting-label">
+                    <span>Tolerance</span>
+                    <input type="range" id="tolerance-slider" min="1" max="15" value="5">
+                </label>
+            </div>
+
+        </main>
     </div>
 
+    <!-- Audio Confirm Sound (Preload not needed for Oscillator) -->
     <script src="script.js"></script>
 </body>
 
