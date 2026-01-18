@@ -799,49 +799,68 @@ function saveCustomTuningsToLS() {
 }
 
 // --- Note Picker Logic ---
+// --- Note Picker Logic ---
+let tempPickerState = { note: "E", octave: 2 };
+const applyNoteBtn = document.getElementById('apply-note-btn');
+
 function openNotePicker(index) {
     activeStringEditIndex = index;
     const currentNote = tempEditingState.strings[index];
 
     // Parse current
     const match = currentNote.match(/^([A-Ga-g]+#?b?)(\d+)$/);
-    let n = "E", o = 2;
-    if (match) { n = match[1]; o = parseInt(match[2]); }
+    if (match) {
+        tempPickerState.note = match[1];
+        tempPickerState.octave = parseInt(match[2]);
+    } else {
+        tempPickerState.note = "E";
+        tempPickerState.octave = 2;
+    }
 
-    renderNotePickerGrid(n);
-
-    // Set octave
-    octaveBtns.forEach(b => {
-        b.classList.toggle('active', parseInt(b.dataset.oct) === o);
-        b.onclick = () => {
-            octaveBtns.forEach(x => x.classList.remove('active'));
-            b.classList.add('active');
-            // Visual update of grid? (optional preview)
-            previewNote(n, parseInt(b.dataset.oct));
-        };
-    });
-
+    renderNotePickerUI();
     notePickerModal.classList.remove('hidden');
 }
 
-function renderNotePickerGrid(activeNoteName) {
+function renderNotePickerUI() {
+    // 1. Grid
+    renderNotePickerGrid();
+
+    // 2. Octave Buttons
+    octaveBtns.forEach(b => {
+        const o = parseInt(b.dataset.oct);
+        b.classList.toggle('active', o === tempPickerState.octave);
+
+        // Re-bind to ensure it updates temp state
+        b.onclick = () => {
+            tempPickerState.octave = o;
+            renderNotePickerUI(); // Re-render to update active classes
+        };
+    });
+}
+
+function renderNotePickerGrid() {
     notePickerGrid.innerHTML = '';
     const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
     notes.forEach(note => {
         const btn = document.createElement('button');
         btn.className = 'note-cell-btn';
-        if (note === activeNoteName) btn.classList.add('active');
+        if (note === tempPickerState.note) btn.classList.add('active');
         btn.textContent = note;
 
         btn.onclick = () => {
-            const activeOct = document.querySelector('.octave-btn.active').dataset.oct;
-            finishNotePick(note, activeOct);
+            tempPickerState.note = note;
+            renderNotePickerGrid(); // Just update UI, don't close
         };
 
         notePickerGrid.appendChild(btn);
     });
 }
+
+// Confirm Action
+applyNoteBtn.addEventListener('click', () => {
+    finishNotePick(tempPickerState.note, tempPickerState.octave);
+});
 
 function finishNotePick(note, octave) {
     const fullNote = `${note}${octave}`;

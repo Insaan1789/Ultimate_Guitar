@@ -5,6 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Circle of Fifths Music Wheel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
     <style>
         :root {
             --bg-color: #1a1a1a;
@@ -17,18 +22,13 @@
             --overlay-width: 4px;
         }
 
+        /* Wheel specific overrides */
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            overflow: hidden;
-            user-select: none;
         }
 
         h1 {
@@ -126,6 +126,11 @@
 </head>
 
 <body>
+
+    <header class="app-header" style="position:fixed; width:100%; top:0; left:0; padding: 1.5rem;">
+        <a href="../index.html" class="home-btn">← Home</a>
+
+    </header>
 
     <h1>Circle of Fifths Decoder</h1>
 
