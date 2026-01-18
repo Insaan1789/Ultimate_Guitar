@@ -3,240 +3,280 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Guitar Suite</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>Ultimate Guitar Tuner</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@700;900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* Specific Styles for Dashboard Cards */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            width: 100%;
-            max-width: 1000px;
-            padding: 2rem;
-        }
-
-        .tool-card {
-            background: linear-gradient(145deg, #1e1e1e, #181818);
-            border-radius: 20px;
-            padding: 2.5rem 1.5rem;
-            text-align: center;
-            text-decoration: none;
-            color: var(--text-color);
-            border: 1px solid #333;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s, border-color 0.3s;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .tool-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.03), transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-            border-color: var(--primary-color);
-        }
-
-        .tool-card:hover::before {
-            opacity: 1;
-        }
-
-        .card-icon {
-            font-size: 3.5rem;
-            margin-bottom: 0.5rem;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
-            transition: transform 0.3s;
-        }
-
-        .tool-card:hover .card-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .card-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 1.6rem;
-            font-weight: 800;
-            margin: 0;
-            color: #fff;
-            letter-spacing: 0.5px;
-        }
-
-        .card-desc {
-            color: #888;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        .card-arrow {
-            margin-top: auto;
-            color: var(--primary-color);
-            font-weight: 600;
-            font-size: 0.9rem;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s;
-        }
-
-        .tool-card:hover .card-arrow {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Hero Text */
-        .hero {
-            text-align: center;
-            margin-bottom: 2rem;
-            margin-top: 3rem;
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(to right, #fff, #888);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0 0 1rem 0;
-            letter-spacing: -1px;
-        }
-
-        .hero p {
-            color: #888;
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .logo-span {
-            color: var(--primary-color);
-            -webkit-text-fill-color: initial;
-            background: none;
-        }
-
-        /* Floating particles */
-        .bg-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(to bottom right, #0a0a0a, #121212);
-            z-index: -1;
-        }
-
-        .blob {
-            position: absolute;
-            filter: blur(80px);
-            opacity: 0.4;
-            animation: float 10s infinite ease-in-out;
-        }
-
-        .blob-1 {
-            top: -10%;
-            left: -10%;
-            width: 50vw;
-            height: 50vw;
-            background: #00ff88;
-            animation-delay: 0s;
-        }
-
-        .blob-2 {
-            bottom: -10%;
-            right: -10%;
-            width: 40vw;
-            height: 40vw;
-            background: #00bcd4;
-            animation-delay: -5s;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translate(0, 0);
-            }
-
-            50% {
-                transform: translate(30px, 50px);
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <div class="app-container">
+        <!-- Header / Settings -->
+        <header class="app-header">
+            <!-- Tools Button replacing Home -->
+            <button id="tools-btn" class="icon-btn" aria-label="Open Tools">
+                <span style="font-size: 1.2rem; margin-right: 0.5rem;">☰</span> Tools
+            </button>
 
-    <div class="bg-gradient">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
+            <h1 class="logo">Guitar<span class="highlight">Tuner</span></h1>
+
+            <button id="theme-toggle" class="icon-btn" aria-label="Toggle Dark Mode">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <path
+                        d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42">
+                    </path>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="display:none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Main Tuner UI -->
+        <main class="tuner-interface">
+
+            <!-- Status / Feedback -->
+            <div class="feedback-container">
+                <div id="status-message" class="status-pill">Ready to Tune</div>
+            </div>
+
+            <!-- Meter Gauge -->
+            <div class="meter-wrapper">
+                <div class="meter-scale">
+                    <div class="scale-ticks">
+                        <!-- Generated via CSS/JS or static -->
+                        <div class="tick big center"></div>
+                        <div class="tick major left-25"></div>
+                        <div class="tick major right-25"></div>
+                    </div>
+                    <!-- Tuning Stability Ring/Bar -->
+                    <div class="stability-overlay">
+                        <div class="stability-bar" id="stability-bar"></div>
+                    </div>
+                </div>
+
+                <!-- Needle -->
+                <div class="needle-container">
+                    <div class="needle" id="tuner-needle"></div>
+                    <div class="needle-glow"></div>
+                </div>
+
+                <!-- Frequency -->
+                <div class="frequency-display" aria-label="Frequency">
+                    <span id="frequency">0.0</span> <span class="unit">Hz</span>
+                </div>
+            </div>
+
+            <!-- Note Display -->
+            <div class="note-display-container">
+                <div class="note-circle">
+                    <div class="note-name" id="note-name">--</div>
+                    <div class="octave" id="note-octave"></div>
+                </div>
+                <div class="tuning-status" id="tuning-status">PLAY STRING</div>
+            </div>
+
+            <!-- Controls Area -->
+            <div class="controls-area">
+
+                <!-- String Selector -->
+                <div class="string-grid" role="radiogroup" aria-label="String Selection">
+                    <!-- Strings will be generated or static -->
+                    <div class="string-item">
+                        <button class="string-btn" data-note="E2" data-freq="82.41">E</button>
+                        <button class="tone-btn" data-note="E2" aria-label="Play E2 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="A2" data-freq="110.00">A</button>
+                        <button class="tone-btn" data-note="A2" aria-label="Play A2 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="D3" data-freq="146.83">D</button>
+                        <button class="tone-btn" data-note="D3" aria-label="Play D3 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="G3" data-freq="196.00">G</button>
+                        <button class="tone-btn" data-note="G3" aria-label="Play G3 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="B3" data-freq="246.94">B</button>
+                        <button class="tone-btn" data-note="B3" aria-label="Play B3 Reference Tone">🔊</button>
+                    </div>
+                    <div class="string-item">
+                        <button class="string-btn" data-note="E4" data-freq="329.63">E</button>
+                        <button class="tone-btn" data-note="E4" aria-label="Play E4 Reference Tone">🔊</button>
+                    </div>
+                </div>
+
+                <div class="mode-controls">
+                    <button class="pill-btn" id="tuning-select-btn">Standard Tuning</button>
+                    <button class="pill-btn active" id="auto-mode-btn">Auto Mode</button>
+                </div>
+
+                <!-- Tuning Selection Screen (Overlay) -->
+                <div id="tuning-selection-screen" class="tuning-screen hidden">
+                    <div class="tuning-header">
+                        <h2>Select Tuning</h2>
+                        <button id="close-tuning-btn" class="icon-btn">✕</button>
+                    </div>
+
+                    <div class="tuning-content">
+                        <!-- Headstock Toggle -->
+                        <div class="headstock-toggle-container">
+                            <span class="label">Headstock</span>
+                            <div class="toggle-switch">
+                                <button class="toggle-option active" data-layout="3+3">3+3</button>
+                                <button class="toggle-option" data-layout="6-in-line">6-in-line</button>
+                            </div>
+                        </div>
+
+                        <!-- Recent Tunings -->
+                        <div class="tuning-section">
+                            <h3>Recent</h3>
+                            <div class="tuning-list" id="recent-tunings-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Instrument Categories -->
+                        <div class="tuning-section">
+                            <h3>Instruments</h3>
+                            <div class="accordion" id="instrument-accordion">
+                                <!-- Populated by JS: Guitar, Bass, Uke, etc. -->
+                            </div>
+                        </div>
+
+                        <!-- Custom & Chromatic -->
+                        <div class="tuning-section">
+                            <h3>Tools</h3>
+                            <div class="tuning-list">
+                                <button class="tuning-item" data-type="chromatic">
+                                    <div class="tuning-info">
+                                        <span class="tuning-name">Chromatic Tuner</span>
+                                        <span class="tuning-notes">Detects all notes</span>
+                                    </div>
+                                </button>
+                                <button class="tuning-item" data-type="custom">
+                                    <div class="tuning-info">
+                                        <span class="tuning-name">Custom Tuning</span>
+                                        <span class="tuning-notes">Create your own</span>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Tuning Editor Overlay -->
+                <div id="custom-tuning-editor" class="tuning-screen hidden">
+                    <div class="tuning-header">
+                        <h2>Edit Tuning</h2>
+                        <div class="editor-actions">
+                            <button id="cancel-custom-btn" class="text-btn">Cancel</button>
+                            <button id="save-custom-btn" class="pill-btn active">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="tuning-content">
+                        <!-- Name & Config -->
+                        <div class="editor-config">
+                            <div class="input-group">
+                                <label>Tuning Name</label>
+                                <input type="text" id="custom-name-input" placeholder="My Tuning">
+                            </div>
+
+                            <div class="config-row">
+                                <div class="config-item">
+                                    <label>Strings</label>
+                                    <div class="stepper">
+                                        <button id="strings-minus" class="stepper-btn">−</button>
+                                        <span id="string-count-display">6</span>
+                                        <button id="strings-plus" class="stepper-btn">+</button>
+                                    </div>
+                                </div>
+                                <div class="config-item">
+                                    <label>Headstock</label>
+                                    <button id="custom-headstock-toggle" class="pill-btn small">3+3</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- String Editor List -->
+                        <div class="string-editor-list" id="string-editor-list">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <div class="danger-zone hidden" id="delete-tuning-wrapper">
+                            <button id="delete-custom-btn" class="btn-text-danger">Delete Tuning</button>
+                        </div>
+                    </div>
+
+                    <!-- Note Picker Modal (Nested) -->
+                    <div id="note-picker-modal" class="modal-overlay hidden">
+                        <div class="modal-card">
+                            <h3>Select Note</h3>
+                            <div class="note-grid" id="note-picker-grid">
+                                <!-- C C# D ... -->
+                            </div>
+                            <div class="octave-selector">
+                                <label>Octave</label>
+                                <div class="octave-slider">
+                                    <button class="octave-btn" data-oct="0">0</button>
+                                    <button class="octave-btn" data-oct="1">1</button>
+                                    <button class="octave-btn" data-oct="2">2</button>
+                                    <button class="octave-btn active" data-oct="3">3</button>
+                                    <button class="octave-btn" data-oct="4">4</button>
+                                    <button class="octave-btn" data-oct="5">5</button>
+                                    <button class="octave-btn" data-oct="6">6</button>
+                                </div>
+                            </div>
+                            <div class="modal-actions">
+                                <button id="close-picker-btn" class="pill-btn">Cancel</button>
+                                <button id="apply-note-btn" class="pill-btn active">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button id="start-btn" class="main-action-btn">
+                    <span class="icon">🎤</span> Start Tuner
+                </button>
+            </div>
+
+            <!-- Hidden Settings (Visual only, functional logic remains) -->
+            <div class="settings-drawer">
+                <label class="setting-label">
+                    <span>Tolerance</span>
+                    <input type="range" id="tolerance-slider" min="1" max="15" value="5">
+                </label>
+            </div>
+
+        </main>
     </div>
 
-    <div class="hero">
-        <h1>Ultimate <span class="logo-span">Guitar</span></h1>
-        <p>The complete toolkit for the modern musician. Tune up, keep time, and master theory.</p>
+    <!-- Global Tools Overlay -->
+    <div id="tools-overlay" class="tools-overlay">
+        <button id="close-tools-btn" class="close-tools-btn" aria-label="Close Tools">✕</button>
+        <div class="tools-grid">
+            <a href="Metronome/index.html" class="tool-link">
+                <span class="tool-icon">⏱️</span>
+                <span class="tool-name">Metronome</span>
+            </a>
+            <a href="music-wheel/index.html" class="tool-link">
+                <span class="tool-icon">🎡</span>
+                <span class="tool-name">Theory Wheel</span>
+            </a>
+        </div>
     </div>
 
-    <main class="dashboard-grid">
-        <a href="tuner/index.html" class="tool-card">
-            <div class="card-icon">🎸</div>
-            <h2 class="card-title">Pro Tuner</h2>
-            <p class="card-desc">Precision chromatic tuner with instrument presets and custom tuning support.</p>
-            <span class="card-arrow">Open Tool →</span>
-        </a>
-
-        <a href="Metronome/index.html" class="tool-card">
-            <div class="card-icon">⏱️</div>
-            <h2 class="card-title">Metronome</h2>
-            <p class="card-desc">Drift-free timing with customizable accents, subdivisions, and tap tempo.</p>
-            <span class="card-arrow">Open Tool →</span>
-        </a>
-
-        <a href="music-wheel/index.html" class="tool-card">
-            <div class="card-icon">🎡</div>
-            <h2 class="card-title">Theory Wheel</h2>
-            <p class="card-desc">Interactive Circle of Fifths decoder for songwriting and chord progression analysis.
-            </p>
-            <span class="card-arrow">Open Tool →</span>
-        </a>
-    </main>
-
-    <footer style="margin-top: auto; padding: 2rem; color: #555; font-size: 0.9rem; text-align: center;">
-        &copy; 2026 Ultimate Guitar Suite
-    </footer>
-
+    <!-- Audio Confirm Sound (Preload not needed for Oscillator) -->
+    <script src="script.js"></script>
 </body>
 
 </html>

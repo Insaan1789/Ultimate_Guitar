@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Guitar Suite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific Styles for Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1000px;
+            padding: 2rem;
+        }
+
+        .tool-card {
+            background: linear-gradient(145deg, #1e1e1e, #181818);
+            border-radius: 20px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-color);
+            border: 1px solid #333;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s, border-color 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.03), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary-color);
+        }
+
+        .tool-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+            transition: transform 0.3s;
+        }
+
+        .tool-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin: 0;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .card-desc {
+            color: #888;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .card-arrow {
+            margin-top: auto;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+        }
+
+        .tool-card:hover .card-arrow {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Text */
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+            margin-top: 3rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 1rem 0;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            color: #888;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .logo-span {
+            color: var(--primary-color);
+            -webkit-text-fill-color: initial;
+            background: none;
+        }
+
+        /* Floating particles */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom right, #0a0a0a, #121212);
+            z-index: -1;
+        }
+
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .blob-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: #00ff88;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 40vw;
+            height: 40vw;
+            background: #00bcd4;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(30px, 50px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-gradient">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="hero">
+        <h1>Ultimate <span class="logo-span">Guitar</span></h1>
+        <p>The complete toolkit for the modern musician. Tune up, keep time, and master theory.</p>
+    </div>
+
+    <main class="dashboard-grid">
+        <a href="tuner/index.html" class="tool-card">
+            <div class="card-icon">🎸</div>
+            <h2 class="card-title">Pro Tuner</h2>
+            <p class="card-desc">Precision chromatic tuner with instrument presets and custom tuning support.</p>
+            <span class="card-arrow">Open Tool →</span>
+        </a>
+
+        <a href="Metronome/index.html" class="tool-card">
+            <div class="card-icon">⏱️</div>
+            <h2 class="card-title">Metronome</h2>
+            <p class="card-desc">Drift-free timing with customizable accents, subdivisions, and tap tempo.</p>
+            <span class="card-arrow">Open Tool →</span>
+        </a>
+
+        <a href="music-wheel/index.html" class="tool-card">
+            <div class="card-icon">🎡</div>
+            <h2 class="card-title">Theory Wheel</h2>
+            <p class="card-desc">Interactive Circle of Fifths decoder for songwriting and chord progression analysis.
+            </p>
+            <span class="card-arrow">Open Tool →</span>
+        </a>
+    </main>
+
+    <footer style="margin-top: auto; padding: 2rem; color: #555; font-size: 0.9rem; text-align: center;">
+        &copy; 2026 Ultimate Guitar Suite
+    </footer>
+
+</body>
+
+</html>
