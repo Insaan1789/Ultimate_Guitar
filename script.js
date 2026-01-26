@@ -1017,7 +1017,13 @@ function processPitch(frequency, dt) {
         const clamp = Math.max(-50, Math.min(50, centDiff));
         targetNeedleAngle = clamp * (1.1); // Scale up slightly to use full gauge
 
-        updateIndicators(centDiff, dt);
+        let detectedKey = currentString;
+        if (currentString === 'AUTO') {
+            const d = detectNote(frequency);
+            if (d) detectedKey = d.note;
+        }
+
+        updateIndicators(centDiff, dt, detectedKey);
     } else {
         // Valid freq but not in expected range (Manual Mode ignore)
         targetNeedleAngle = 0;
@@ -1058,6 +1064,12 @@ function updateIndicators(cents, dt) {
             hasPlayedSound = true;
             statusMsg.textContent = "String Tuned!";
             statusMsg.className = "status-pill good";
+
+            // Visual Feedback: Mark string button as tuned
+            if (noteKey) {
+                const btn = document.querySelector(`.string-btn[data-note="${noteKey}"]`);
+                if (btn) btn.classList.add('tuned');
+            }
         }
     } else {
         noteNameEl.classList.remove('in-tune');

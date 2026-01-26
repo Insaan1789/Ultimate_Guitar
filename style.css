@@ -459,6 +459,14 @@ body {
     transform: translateY(-2px);
 }
 
+/* Tuned State (Success) */
+.string-btn.tuned {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+    box-shadow: 0 0 15px var(--accent-green-dim), inset 0 0 10px rgba(0, 255, 136, 0.1);
+    background: rgba(0, 255, 136, 0.05);
+}
+
 /* Tone Button Small */
 .tone-btn {
     width: 32px;
