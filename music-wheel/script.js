@@ -17,6 +17,71 @@ const RING_CONFIG = [
     { id: 'major', rOuter: 170, rInner: 90, offset: 0, textOffset: 130, type: 'Major' }
 ];
 
+// DATA: Chord Shapes (Frets per string: Low E -> High E)
+// -1 = Muted, 0 = Open
+const CHORD_SHAPES = {
+    'C': {
+        'Major': [-1, 3, 2, 0, 1, 0],
+        'Minor': [-1, 3, 5, 5, 4, 3], // Cm Barre
+        'Dim': [-1, 3, 4, 2, 4, -1]   // Cdim7
+    },
+    'G': {
+        'Major': [3, 2, 0, 0, 0, 3],
+        'Minor': [3, 5, 5, 3, 3, 3],  // Gm Barre
+        'Dim': [3, -1, 2, 3, 2, -1]   // Gdim7
+    },
+    'D': {
+        'Major': [-1, -1, 0, 2, 3, 2],
+        'Minor': [-1, -1, 0, 2, 3, 1],
+        'Dim': [-1, -1, 0, 1, 0, 1]   // Ddim7
+    },
+    'A': {
+        'Major': [-1, 0, 2, 2, 2, 0],
+        'Minor': [-1, 0, 2, 2, 1, 0],
+        'Dim': [-1, 0, 1, 2, 1, 2]    // Adim7
+    },
+    'E': {
+        'Major': [0, 2, 2, 1, 0, 0],
+        'Minor': [0, 2, 2, 0, 0, 0],
+        'Dim': [0, 1, 2, 0, 2, 0] // Edim7 (approx)
+    },
+    'B': {
+        'Major': [-1, 2, 4, 4, 4, 2], // B Barre
+        'Minor': [-1, 2, 4, 4, 3, 2], // Bm Barre
+        'Dim': [-1, 2, 3, 1, 3, -1]   // Bdim7
+    },
+    'Gb': { // F#
+        'Major': [2, 4, 4, 3, 2, 2],
+        'Minor': [2, 4, 4, 2, 2, 2],
+        'Dim': [2, -1, 1, 2, 1, -1]
+    },
+    'Db': { // C#
+        'Major': [-1, 4, 6, 6, 6, 4],
+        'Minor': [-1, 4, 6, 6, 5, 4],
+        'Dim': [-1, 4, 5, 3, 5, -1]
+    },
+    'Ab': { // G#
+        'Major': [4, 6, 6, 5, 4, 4],
+        'Minor': [4, 6, 6, 4, 4, 4],
+        'Dim': [4, -1, 3, 4, 3, -1]
+    },
+    'Eb': { // D#
+        'Major': [-1, 6, 8, 8, 8, 6],
+        'Minor': [-1, 6, 8, 8, 7, 6],
+        'Dim': [-1, -1, 1, 2, 1, 2] // D#dim7
+    },
+    'Bb': { // A#
+        'Major': [-1, 1, 3, 3, 3, 1],
+        'Minor': [-1, 1, 3, 3, 2, 1],
+        'Dim': [-1, 1, 2, 0, 2, -1]
+    },
+    'F': {
+        'Major': [1, 3, 3, 2, 1, 1],
+        'Minor': [1, 3, 3, 1, 1, 1],
+        'Dim': [1, -1, 0, 1, 0, -1]
+    }
+};
+
 // Roman Numerals for Overlay - Updated radii
 const OVERLAY_LABELS = [
     { text: 'I', slot: -0.3, r: 156 },
@@ -306,30 +371,157 @@ function hideTooltip() {
 }
 
 function createChordCard(variant, note, type) {
+    // Lookup shape
+    // variant 'Open' vs 'Barre' is legacy in calling code logic, 
+    // but we can just use the single defined shape for simplicity 
+    // or map existing variants if we had multiple definitions.
+    // For this refactor, we primarily use the defined shape in CHORD_SHAPES.
+
+    // Safety check
+    if (!CHORD_SHAPES[note] || !CHORD_SHAPES[note][type]) {
+        return `<div style="color:red">?</div>`;
+    }
+
+    const frets = CHORD_SHAPES[note][type];
+    const svg = renderChordSVG(frets);
+
     return `
         <div style="text-align:center;">
-            <div style="font-size:0.8rem; color:#aaa; margin-bottom:4px;">${variant}</div>
-            <svg width="60" height="80" viewBox="0 0 60 80" style="background:#fff; border-radius:4px; margin:0 auto;">
-                    <rect x="10" y="10" width="40" height="60" fill="none" stroke="#333" stroke-width="1"/>
-                    <line x1="18" y1="10" x2="18" y2="70" stroke="#333" stroke-width="0.5"/>
-                    <line x1="26" y1="10" x2="26" y2="70" stroke="#333" stroke-width="0.5"/>
-                    <line x1="34" y1="10" x2="34" y2="70" stroke="#333" stroke-width="0.5"/>
-                    <line x1="42" y1="10" x2="42" y2="70" stroke="#333" stroke-width="0.5"/>
-                    
-                    <line x1="10" y1="22" x2="50" y2="22" stroke="#333" stroke-width="0.5"/>
-                    <line x1="10" y1="34" x2="50" y2="34" stroke="#333" stroke-width="0.5"/>
-                    <line x1="10" y1="46" x2="50" y2="46" stroke="#333" stroke-width="0.5"/>
-                    <line x1="10" y1="58" x2="50" y2="58" stroke="#333" stroke-width="0.5"/>
-                    
-                    <rect x="10" y="8" width="40" height="4" fill="#000"/>
-                    
-                    ${variant === 'Barre' ? '<rect x="10" y="24" width="40" height="4" rx="2" fill="#000"/>' : ''}
-                    <circle r="3" cx="18" cy="${variant === 'Open' ? 22 : 46}" fill="#000"/>
-                    <circle r="3" cx="26" cy="${variant === 'Open' ? 34 : 46}" fill="#000"/>
-                    <circle r="3" cx="42" cy="${variant === 'Open' ? 34 : 34}" fill="#000"/>
-            </svg>
+             <div style="font-size:0.8rem; color:#aaa; margin-bottom:4px;">${variant}</div>
+             ${svg}
         </div>
     `;
+}
+
+/**
+ * GENERATE CHORD SVG
+ * frets: array of 6 integers [-1, 3, 2, 0, 1, 0]
+ * (-1 = muted, 0 = open)
+ */
+function renderChordSVG(frets) {
+    const width = 60;
+    const height = 80;
+    const paddingX = 10;
+    const paddingY = 10;
+    const stringGap = 8;
+    const fretGap = 12;
+
+    // Determine fret range
+    const activeFrets = frets.filter(f => f > 0);
+    const minFret = activeFrets.length ? Math.min(...activeFrets) : 0;
+    const maxFret = activeFrets.length ? Math.max(...activeFrets) : 0;
+
+    // Calculate start fret (offset)
+    // If chords go high up (e.g. 5th fret), shift view. 
+    // Usually show 5 frets.
+    let startOffset = 0;
+    if (minFret > 2) startOffset = minFret - 1;
+
+    // Detect Barre
+    // Heuristic: Multiple strings at same lowest fret > 0?
+    // Or just look for the bar spanning strings.
+    // Simple approach: Find the lowest fret > 0 that has >= 2 notes.
+    // Count occurrences of each fret
+    const counts = {};
+    activeFrets.forEach(f => counts[f] = (counts[f] || 0) + 1);
+
+    let barreFret = null;
+    let barreStartStr = 6;
+    let barreEndStr = 1;
+
+    // Check for barre candidates in ascending order of fret
+    const uniqueFrets = Object.keys(counts).map(Number).sort((a, b) => a - b);
+    for (const f of uniqueFrets) {
+        if (counts[f] >= 2) {
+            // Check span. Which strings use this fret?
+            // Strings are 0-5 (low E to high E) in our array logic processing, 
+            // but standard notation is 6 to 1. 
+            // array index 0 = Low E (string 6). 
+            // array index 5 = High E (string 1).
+            const stringIndices = frets.map((val, idx) => val === f ? idx : -1).filter(i => i !== -1);
+            const firstStrIdx = Math.min(...stringIndices); // e.g. 0 (Low E)
+            const lastStrIdx = Math.max(...stringIndices);  // e.g. 5 (High E)
+
+            // "Valid" barre usually covers intermediate strings too (even if they have higher frets)
+            // But let's just draw a bar from first to last occurrence at that fret.
+            barreFret = f;
+            barreStartStr = firstStrIdx;
+            barreEndStr = lastStrIdx;
+            break; // only one barre (usually the lowest one)
+        }
+    }
+
+    // SVG Parts
+    const svgHeader = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="background:#fff; border-radius:4px; margin:0 auto;">`;
+    let svgContent = '';
+
+    // 1. Grid
+    // Vertical Lines (Strings)
+    for (let i = 0; i < 6; i++) {
+        const x = paddingX + i * stringGap;
+        svgContent += `<line x1="${x}" y1="${paddingY}" x2="${x}" y2="${paddingY + 5 * fretGap}" stroke="#333" stroke-width="0.5"/>`;
+    }
+    // Horizontal Lines (Frets)
+    for (let i = 0; i <= 5; i++) {
+        const y = paddingY + i * fretGap;
+        const strokeW = (i === 0 && startOffset === 0) ? 2 : 0.5; // Nut is thicker if offset 0
+        svgContent += `<line x1="${paddingX}" y1="${y}" x2="${width - paddingX}" y2="${y}" stroke="#333" stroke-width="${strokeW}"/>`;
+    }
+
+    // 2. Fret Number (if offset > 0)
+    if (startOffset > 0) {
+        svgContent += `<text x="${paddingX - 6}" y="${paddingY + fretGap}" font-size="10" font-family="Arial" fill="#000" dominant-baseline="middle">${startOffset + 1}</text>`;
+    }
+
+    // 3. Dots & Barre
+    const getX = (strIdx) => paddingX + strIdx * stringGap;
+    const getY = (fret) => paddingY + (fret - startOffset) * fretGap - (fretGap / 2);
+
+    // Draw Barre
+    if (barreFret && barreFret > 0) {
+        // Adjust for offset
+        const relFret = barreFret - startOffset;
+        if (relFret > 0 && relFret <= 5) {
+            const x1 = getX(barreStartStr);
+            const x2 = getX(barreEndStr);
+            const y = getY(barreFret);
+            svgContent += `<rect x="${x1}" y="${y - 4}" width="${x2 - x1}" height="8" rx="4" fill="#000"/>`;
+        }
+    }
+
+    // Draw Dots
+    frets.forEach((fret, strIdx) => {
+        if (fret === -1) {
+            // Muted x above nut
+            svgContent += `<text x="${getX(strIdx)}" y="${paddingY - 4}" text-anchor="middle" font-size="8">×</text>`;
+        } else if (fret === 0) {
+            // Open circle above nut
+            const x = getX(strIdx);
+            svgContent += `<circle cx="${x}" cy="${paddingY - 3}" r="2" fill="none" stroke="#000" stroke-width="0.5"/>`;
+        } else {
+            // Fret dot
+            // Don't draw if covered by barre (unless it's a higher fret on same string, which is logic handled by loop)
+            // Actually, if we drew a barre at this fret, we don't need a dot for the specific strings *in* the barre.
+            // But simple logic: just draw dots, if it overlaps barre it's black-on-black (invisible)
+
+            // Wait, if it's the exact barre notes, we can skip to keep it clean, 
+            // OR just draw it. 
+            // Let's Skip dot if it's exactly the barre fret and within barre span, 
+            // since the rect covers it.
+            const isBarreNote = (barreFret === fret && strIdx >= barreStartStr && strIdx <= barreEndStr);
+
+            if (!isBarreNote || !barreFret) { // Draw if not part of barre visual
+                const relFret = fret - startOffset;
+                if (relFret > 0 && relFret <= 5) {
+                    const cx = getX(strIdx);
+                    const cy = getY(fret);
+                    svgContent += `<circle cx="${cx}" cy="${cy}" r="3.5" fill="#000"/>`;
+                }
+            }
+        }
+    });
+
+    return svgHeader + svgContent + '</svg>';
 }
 
 /**
